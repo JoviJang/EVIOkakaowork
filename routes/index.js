@@ -50,46 +50,51 @@ router.post('/info', async function(req, res, next) {
   try {
     let messageData = {
       "conversation_id": conversation.data.conversation.id,
-      "text": req.body.firstName,
+      "text": "몰트 적립 신청서",
       "blocks": [
         {
           "type": "header",
-          "text": req.body.lastName,
+          "text": req.body.first,
           "style": "blue"
         },
         {
           "type": "text",
-          "text": req.body.firstName,
+          "text": req.body.second,
           "markdown": true
         },
         {
           "type": "divider"
         },
         {
-          "type": "image_link",
-          "url": "https://t1.kakaocdn.net/kakaowork/resources/block-kit/imagelink/image1@3x.jpg"
+          "type": "text",
+          "text": req.body.thrid,
+          "markdown": true
         },
         {
-          "type": "action",
-          "elements": [
-            {
-              "type": "button",
-              "text": "승인",
-              "style": "primary"
-            },
-            {
-              "type": "button",
-              "text": "반려",
-              "style": "danger"
-            }
-          ]
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "text": req.body.fourth,
+          "markdown": true
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "text": req.body.fifth,
+          "markdown": true
+        },
+        {
+          "type": "divider"
         },
         {
           "type": "description",
           "term": "일시",
           "content": {
             "type": "text",
-            "text": "2020년 9월 16일 7시",
+            "text": new Date().toISOString(),
             "markdown": false
           },
           "accent": true
