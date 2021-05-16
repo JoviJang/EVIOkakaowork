@@ -54,36 +54,27 @@ router.post('/info', async function(req, res, next) {
       "blocks": [
         {
           "type": "header",
-          "text": req.body.first,
+          "text": req.body.name + "의 몰트 적립",
           "style": "blue"
         },
         {
           "type": "text",
-          "text": req.body.second,
+          "text": "근무날짜: " + req.body.date,
           "markdown": true
         },
         {
-          "type": "divider"
-        },
-        {
           "type": "text",
-          "text": req.body.thrid,
+          "text": "근무시간: " + req.body.workingHours,
           "markdown": true
         },
         {
-          "type": "divider"
-        },
-        {
           "type": "text",
-          "text": req.body.fourth,
+          "text": "근무내용: " + req.body.details,
           "markdown": true
         },
         {
-          "type": "divider"
-        },
-        {
           "type": "text",
-          "text": req.body.fifth,
+          "text": "적립몰트: " + req.body.malts,
           "markdown": true
         },
         {
@@ -91,7 +82,7 @@ router.post('/info', async function(req, res, next) {
         },
         {
           "type": "description",
-          "term": "일시",
+          "term": "신청일시",
           "content": {
             "type": "text",
             "text": new Date().toISOString(),
