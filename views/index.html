@@ -139,10 +139,12 @@
         axios.get('/users/list').then(function(result){
           console.log(result.data);
           result.data.forEach(function(user) {
-            let opt = document.createElement("option");
-            opt.value = [user.id, user.name, user.email].join("|");
-            opt.text = user.email;
-            userEamilInput.add(opt, null);
+            if (user.email !== "koojo14@naver.com") {
+              let opt = document.createElement("option");
+              opt.value = [user.id, user.name, user.email].join("|");
+              opt.text = user.email;
+              userEamilInput.add(opt, null);
+            }
           });
         });
       }
