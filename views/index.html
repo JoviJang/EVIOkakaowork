@@ -17,6 +17,14 @@
       <form class="needs-validation" novalidate="" id="kakaoForm">
         <div class="row g-3">
           <div class="col-sm-6">
+
+            <div class="col-12">
+              <label for="email" class="form-label">Email <span class="text-muted"></span></label>
+              <select class="form-select" aria-label="select email" id="userEmail" name="userEmail" required>
+                <option value="" selected>Select User Email</option>
+              </select>
+            </div>
+
             <label for="name" class="form-label">신청자</label>
             <input type="text" class="form-control" name="name" id="name" placeholder="이름" value="" required="">
             <!-- <label for="firstName" class="form-label">First name</label>
@@ -28,7 +36,7 @@
 
           <div class="col-sm-6">
             <label for="date" class="form-label">근무일</label>
-            <input type="text" class="form-control" name="date" id="date" placeholder="2021.01.01." value="" required="">
+            <input type="date" class="form-control" name="date" id="date" placeholder="2021.01.01." value="" required="">
             <!-- <label for="lastName" class="form-label">Last name</label>
             <input type="text" class="form-control" name="lastName" id="lastName" placeholder="" value="" required=""> -->
             <div class="invalid-feedback">
@@ -124,17 +132,56 @@
     </div>
   </div>
   <script>
+
+      let userNameInput = document.querySelector('input[name=name]');
+      let userEamilInput = document.getElementById("userEmail");
+      function getUserEmail() {
+        axios.get('/users/list').then(function(result){
+          console.log(result.data);
+          result.data.forEach(function(user) {
+            let opt = document.createElement("option");
+            opt.value = [user.id, user.name, user.email].join("|");
+            opt.text = user.email;
+            userEamilInput.add(opt, null);
+          });
+        });
+      }
+      getUserEmail();
+
+      userEamilInput.addEventListener("change", function(event) {
+        userNameInput.value = event.target.value.split("|")[1];
+      });
+
       let form = document.getElementById("kakaoForm");
+
+      let dateControl = document.querySelector('input[type="date"]');
+      dateControl.value = new Date().toISOString('ko').slice(0, 10);
 
       function handleSubmit(event) {
         event.preventDefault();
         const data = new FormData(event.target);
         const name = data.get("name");
         const date = data.get("date");
+        const userEmailValue = data.get("userEmail");
         const workingHours = data.get("workinghours");
         const details = data.get("details");
         const malts = data.get("malts");
         // console.log(firstNameValue);
+
+        if (!userEmailValue) {
+            Swal.fire("이메일을 선택해주세요");
+            return;
+          }
+
+          if (!name) {
+            Swal.fire("이름을 입력해주세요");
+            return;
+          }
+
+          if (!malts) {
+            Swal.fire("적립 몰트를 입력해주세요");
+            return;
+          }
 
         let postData = {};
         postData.name = name;
@@ -142,7 +189,8 @@
         postData.workingHours = workingHours;
         postData.details = details;
         postData.malts = malts;
-        postData.userEmail = "jovi.jang@evio.kr";
+        postData.userEmail = userEmailValue.split("|")[2];
+        postData.userId = userEmailValue.split("|")[0];
 
         axios.post('/info', postData).then(function(result){
             console.log(result);

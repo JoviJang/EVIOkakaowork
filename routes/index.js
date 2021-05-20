@@ -1,6 +1,10 @@
 var express = require('express');
 var router = express.Router();
 const axios = require('axios');
+const moment = require('moment');
+
+require('moment-timezone');
+moment.tz.setDefault("Asia/Seoul");
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -21,35 +25,70 @@ router.get('/info/:userEmail', function(req, res, next) {
 
 router.post('/info', async function(req, res, next) {
   let result, conversation, message;
-  try {
-    result = await axios.get("https://api.kakaowork.com/v1/users.find_by_email?email=" + req.body.userEmail, {
-      headers: {
-          'Authorization': `Bearer ${process.env.KAKAOAPIKEY}`
-      }
-    });
-  } catch (error) {
-    next(error);
-  }
+  let userId, name, email, malts, date;
+  userId = req.body.userId;
+  name = req.body.name;
+  email = req.body.userEmail;
+  date = req.body.date;
+  malts = req.body.malts;
+
+  // try {
+  //   result = await axios.get("https://api.kakaowork.com/v1/users.find_by_email?email=" + req.body.userEmail, {
+  //     headers: {
+  //         'Authorization': `Bearer ${process.env.KAKAOAPIKEY}`
+  //     }
+  //   });
+  // } catch (error) {
+  //   next(error);
+  // }
+
+
+  // 방 만들기 1회성 사용
+  // try {
+  //   result = await axios.get("https://api.kakaowork.com/v1/users.list", {
+  //     headers: {
+  //         'Authorization': `Bearer ${process.env.KAKAOAPIKEY}`
+  //     }
+  //   });
+  // } catch (error) {
+  //   next(error);
+  // }
+  // // // console.log(result.data);
+  // const userList = result.data.users.map(obj => {
+  //   return obj.id
+  // });
+  // try {
+  //   conversation = await axios.post("https://api.kakaowork.com/v1/conversations.open", {
+  //     user_ids: userList
+  //   } , {
+  //     headers: {
+  //         'Authorization': `Bearer ${process.env.KAKAOAPIKEY}`
+  //     }
+  //   });
+  // } catch (error) {
+  //   next(error);
+  // }
+
   // console.log(result.data);
-  const userId = result.data.user.id;
-  console.log(userId);
+  // const userId = result.data.user.id;
+  // console.log(userId);
   // conversation open
-  try {
-    conversation = await axios.post("https://api.kakaowork.com/v1/conversations.open", {
-      user_id: userId
-    } , {
-      headers: {
-          'Authorization': `Bearer ${process.env.KAKAOAPIKEY}`
-      }
-    });
-  } catch (error) {
-    next(error);
-  }
-  console.log('conversation', conversation);
+  // try {
+  //   conversation = await axios.post("https://api.kakaowork.com/v1/conversations.open", {
+  //     user_id: userId
+  //   } , {
+  //     headers: {
+  //         'Authorization': `Bearer ${process.env.KAKAOAPIKEY}`
+  //     }
+  //   });
+  // } catch (error) {
+  //   next(error);
+  // }
+  // console.log('conversation', conversation);
   // message
   try {
     let messageData = {
-      "conversation_id": conversation.data.conversation.id,
+      "conversation_id": 1231896,
       "text": "몰트 적립 신청서",
       "blocks": [
         {
@@ -85,7 +124,7 @@ router.post('/info', async function(req, res, next) {
           "term": "신청일시",
           "content": {
             "type": "text",
-            "text": new Date().toISOString(),
+            "text": moment().format("MM월 DD일 HH시 SS초"),
             "markdown": false
           },
           "accent": true
