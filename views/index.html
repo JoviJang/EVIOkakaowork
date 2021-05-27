@@ -16,15 +16,15 @@
       <h4 class="mb-3">몰트 적립을 지금 바로 신청하세요.</h4>
       <form class="needs-validation" novalidate="" id="kakaoForm">
         <div class="row g-3">
-          <div class="col-sm-6">
 
             <div class="col-12">
               <label for="email" class="form-label">Email <span class="text-muted"></span></label>
               <select class="form-select" aria-label="select email" id="userEmail" name="userEmail" required>
-                <option value="" selected>Select User Email</option>
+                <option value="" selected>신청자 이메일 선택</option>
               </select>
             </div>
 
+          <div class="col-sm-6">
             <label for="name" class="form-label">신청자</label>
             <input type="text" class="form-control" name="name" id="name" placeholder="이름" value="" required="">
             <!-- <label for="firstName" class="form-label">First name</label>
@@ -55,14 +55,14 @@
             </div>
           </div> -->
 
-          <div class="col-12">
-            <!-- <label for="email" class="form-label">Email <span class="text-muted">(Optional)</span></label>
-            <input type="email" class="form-control" id="email" placeholder="you@example.com"> -->
-            <label for="workinghours" class="form-label">근무시간 <span class="text-muted">(30분 단위로 입력)</span></label>
-            <input type="text" class="form-control" name="workinghours" id="workinghours" placeholder="18:00~21:30">
-            <div class="invalid-feedback">
-              Please enter a valid email address for shipping updates.
-            </div>
+          <div class="col-sm-6">
+            <label for ="timepickerStart" class="foam-lable">시작시간</label>
+            <input type="text" class="form-control" id="timepickerStart"/>
+          </div>
+          
+          <div class="col-sm-6">
+            <label for ="timepickerEnd" class="foam-lable">종료시간</label>
+            <input type="text" class="form-control" id="timepickerEnd"/>
           </div>
 
           <div class="col-12">
@@ -132,7 +132,29 @@
     </div>
   </div>
   <script>
-
+      $(document).ready(function(){
+        $('#timepickerStart').mdtimepicker({
+          label: "시작",
+          hourPadding: false,
+          timeFormat:'hh:mm:ss',
+          is24hour: true,
+        }); 
+        $('#timepickerEnd').mdtimepicker({
+          label: "종료",
+          hourPadding: false,
+          timeFormat:'hh:mm:ss',
+          is24hour: true,
+        }); 
+        $('#timepickerStart').mdtimepicker().on('timechanged', function(e){
+          $('#timepickerEnd').mdtimepicker('show');
+          $('#timepickerEnd').mdtimepicker('setValue',e.value);
+        });
+        $('#timepickerEnd').mdtimepicker().on('timechanged', function(e){
+          let diff = getTimeDiff($('#timepickerStart').val(), $('#timepickerEnd').val());
+          document.querySelector('input[name=malts]').value = Math.floor(diff / 15) * 0.25;
+        });
+      });
+      
       let userNameInput = document.querySelector('input[name=name]');
       let userEamilInput = document.getElementById("userEmail");
       function getUserEmail() {
@@ -165,7 +187,7 @@
         const name = data.get("name");
         const date = data.get("date");
         const userEmailValue = data.get("userEmail");
-        const workingHours = data.get("workinghours");
+        const workingHours = $('#timepickerStart').val() + "~" + $('#timepickerEnd').val();
         const details = data.get("details");
         const malts = data.get("malts");
         // console.log(firstNameValue);
@@ -195,12 +217,30 @@
         postData.userId = userEmailValue.split("|")[0];
 
         axios.post('/info', postData).then(function(result){
-            console.log(result);
+            // console.log(result);
             form.reset();
             Swal.fire(result.data.success ? "몰트 적립 신청 완료" : "메세지를 보내지 못했습니다.");
         });
       }
 
       form.addEventListener('submit', handleSubmit);
+
+      function getTimeDiff(start, end) {
+        var splitted1 = start.split(":");
+        var splitted2 = end.split(":");
+        var time1 = Number.parseInt(splitted1[0] * 60) + Number.parseInt(splitted1[1]);
+        var time2 = Number.parseInt(splitted2[0] * 60) + Number.parseInt(splitted2[1]);
+        // console.log(time1, time2);
+        var minutes;
+
+        minutes = time2 - time1;
+
+        if (minutes < 0) {
+          minutes = time2 + 1440 - time1;
+          return minutes;
+        } else {
+          return minutes;
+        }
+      }
   </script>
 {% endblock %}
