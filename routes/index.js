@@ -124,7 +124,7 @@ router.post('/info', async function(req, res, next) {
           "term": "신청일시",
           "content": {
             "type": "text",
-            "text": moment().format("MM월 DD일 HH시 SS초"),
+            "text": moment().format("MM월 DD일 HH시 mm분"),
             "markdown": false
           },
           "accent": true
